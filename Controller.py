@@ -12,7 +12,6 @@ Function to monitor the results of the system and update our average confidence 
     @param newConfidence The most recent confidence of the system
 '''
 def monitor(newConfidence):
-    print("=====MONITOR=====")
     # Add newest confidence to the beginning of the array and remove the oldest confidence
     lastTwoConfidences.insert(0, newConfidence)
     lastTwoConfidences.pop()
@@ -23,7 +22,6 @@ Function to analyze our system properties to ensure we're meeting an acceptable 
             (True = below minimum (BAD), False = above minimum (GOOD)) 
 '''
 def analyze():
-    print "=====ANALYZE====="
     # Calculate the average confidence & alert the system if it's below our acceptable minimum (and no -1's in array to indicate we're past initial condition)
     averageConfidence = sum(lastTwoConfidences)/float(len(lastTwoConfidences))
     return (averageConfidence < MIMIMUM_ACCEPTABLE_CONFIDENCE and -1 not in lastTwoConfidences)
@@ -35,7 +33,6 @@ Function to take in an audio transcription and identify its most likely language
 def plan(mostRecentAudio):
     global lastTwoConfidences #Allows us to update global reference
 
-    print "=====PLAN====="
     if analyze():  # If our analyze function indicates that we're below average confidence, we identify our new language
         print "Recent Average Confidence too low - identifying new suggested language"
         try:
@@ -60,6 +57,5 @@ Function to 'execute' the change on the system and return what we're changing
     @return newLanguage The language we're changing the system to
 '''
 def execute(newLangauge):
-    print "=====EXECUTE====="
     print "Switching system to {}".format(newLangauge)
     return newLangauge

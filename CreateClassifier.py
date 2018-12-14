@@ -4,7 +4,7 @@ from nltk.classify import SklearnClassifier
 from sklearn.naive_bayes import BernoulliNB
 
 '''
-A method to open a CSV file and read in data, and split it into three dictionaries - one for training, one for development, and one for testing
+A method to open a CSV file and read in data, and split it into two dictionaries - one for training & one for testing
 '''
 def CSV_To_Dictionary(filename):
     with open(filename, 'r') as f:
@@ -32,15 +32,14 @@ def CSV_To_Dictionary(filename):
 
     f.close()
 
-    # Actually split the data from 1 list into the train/dev/test lists
+    # Actually split the data from 1 list into the train/test lists
     enTrain, enTest = split_data(english)
     frTrain, frTest = split_data(french)
     grTrain, grTest = split_data(german)
     itTrain, itTest = split_data(italian)
     spTrain, spTest = split_data(spanish)
 
-
-    # Format the data as a dictionary - not the most efficient way of doing it, but it quickly allowed me to reformat this as 3 dictionaries
+    # Format the data as a dictionary - not the most efficient way, but it lets me quickly reformat this
     trainingData = {
         'en-GB': enTrain,
         'fr-FR': frTrain,
@@ -78,7 +77,7 @@ def split_data(questionList):
 
 if __name__ == "__main__":
     # split the data into two lists
-    train, test = CSV_To_Dictionary('Datasets/TrainingDataSmall.csv')
+    train, test = CSV_To_Dictionary('Datasets/TrainingDataMedium.csv')
 
     # result list instantiation and a definition of possible classes
     labeledTrain = []
@@ -129,7 +128,7 @@ if __name__ == "__main__":
     dt = utl.EvaluateClassifier(dt, labeledTest, test, possibleClassifications)
 
     # Save it to disk, to allow for later use as a classifier
-    outfile = open('languageClassifierTwo.pickle', 'wb')
+    outfile = open('languageClassifierThree.pickle', 'wb')
     pickle.dump(classifier, outfile)
     print("\nClassifier saved!")
     outfile.close()

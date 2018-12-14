@@ -2,7 +2,6 @@ import nltk, pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-from nltk.tag import map_tag
 import string
 
 '''
@@ -17,10 +16,10 @@ class MajorityVotesClassifier(nltk.classify.api.ClassifierI):
     def labels(self):
         return list()
 
+    '''
+    Classifies the given data based on the results of all three classifiers
+    '''
     def classify(self, data):
-        """
-        Classifies the given data sample.
-        """
         votes = []
         for classifier in self.__classifiers:
             vote = classifier.classify(data)
@@ -30,7 +29,8 @@ class MajorityVotesClassifier(nltk.classify.api.ClassifierI):
 
 
 '''
-A method to allow for accessing of a saved model.  Used in classifyQuestions.py to offer classification
+A method to allow for accessing of a saved model.
+Unpickles the model and makes it available as an object
 '''
 def ReadModel(modelFilename):
     return pickle.load(open(modelFilename, 'rb'))
@@ -58,7 +58,6 @@ def get_features(text):
     trigrams = nltk.trigrams(words)
     trigrams = ["%s %s %s" % (i[0], i[1], i[2]) for i in trigrams]
 
-
     # Calculate the average word length in the sentence
     wlSum = 0
     for word in words:
@@ -69,8 +68,6 @@ def get_features(text):
         averageWordLength.append(wlSum/len(words))
     else:
         averageWordLength.append(0)
-
-
 
     # combine the length, bigrams, & trigrams
     features = bigrams + trigrams + averageWordLength
@@ -108,13 +105,12 @@ def PlotConfusionMatrix( \
 
 
 '''
-A method to evaluate classifier's accuracy on a testSet and create a confusion matrix
+A method to evaluate classifier's accuracy on a test set and create a confusion matrix
 '''
 def EvaluateClassifier(classifier, testSet, testLabeledData, possibleClassifications):
     print("Classifier's accuracy values:")
 
     onTestSetAccuracy = nltk.classify.accuracy(classifier, testSet)
-
     print("\tOn test set = {}".format(onTestSetAccuracy))
 
     # List to store the cases where the algorithm made a mistake
@@ -131,7 +127,6 @@ def EvaluateClassifier(classifier, testSet, testLabeledData, possibleClassificat
     itRight = 0
     spRight = 0
 
-
     # plotting Confusion Matrix
     y_test, y_pred = [], []
     for (tag, transcriptions) in testLabeledData.items():
@@ -139,6 +134,7 @@ def EvaluateClassifier(classifier, testSet, testLabeledData, possibleClassificat
         for transcription in transcriptions:
             guess = classifier.classify(get_features(transcription))
 
+            # Increment our overall count for each language (and our correct count if we correctly classified it)
             if tag == "en-GB":
                 enCount = enCount + 1
                 if guess == tag:

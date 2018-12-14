@@ -5,5 +5,8 @@ A simple method to return the classification of a question given the text of the
 '''
 def predictLanguage(inputTrans):
     # Load the classifier created and saved by CreateClassifier.py
-    classifier = utl.ReadModel('languageClassifier.pickle')
-    return classifier.classify({ inputTrans: True })  # the dictionary format is required for the classifier, but the 'True' has no bearing on the classification
+    classifier = utl.ReadModel('languageClassifierThree.pickle')
+
+    #Extract the features, feed it into the classifier, and return the result
+    languageFeatures = utl.get_features(inputTrans)
+    return classifier.classify(languageFeatures)
