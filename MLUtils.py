@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from nltk.tag import map_tag
+import string
 
 '''
 A class to allow for a Majority Votes Classifier System
@@ -42,7 +43,7 @@ def get_features(text):
     words = []
 
     # Tokenize the question as a sentence and then tokenize the sentence into words
-    sentences = nltk.sent_tokenize(text)
+    sentences = nltk.sent_tokenize(text.translate(None, string.punctuation))
     for sentence in sentences:
         words = words + nltk.word_tokenize(sentence)
 
@@ -57,13 +58,22 @@ def get_features(text):
     trigrams = nltk.trigrams(words)
     trigrams = ["%s %s %s" % (i[0], i[1], i[2]) for i in trigrams]
 
-    # Calculate the length of the sentence
-    length = []
-    length.append(len(words))
+
+    # Calculate the average word length in the sentence
+    wlSum = 0
+    for word in words:
+        wlSum = wlSum + len(word)
+
+    averageWordLength = []
+    if len(words) != 0:
+        averageWordLength.append(wlSum/len(words))
+    else:
+        averageWordLength.append(0)
+
 
 
     # combine the length, bigrams, & trigrams
-    features = length + bigrams + trigrams
+    features = bigrams + trigrams + averageWordLength
 
     # Return those features as a dictionary
     features = dict([(i, True) for i in features])

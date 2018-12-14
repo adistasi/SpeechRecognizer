@@ -33,6 +33,7 @@ def sampleMicrophoneAudio(mic, recognizer, lang):
     global mostRecentAudio
 
     try:  # Try to handle UnknownValueError generated when the system can't generate a transcription (doesn't recognize)
+        print "=========================================================="
         print "Please speak into the microphone for a text transcription:\n"
         with mic as source:  # Sample audio from microhpone
             #  Use first .5 seconds of audio to filter out & ignore ambient noise - raises transcription confidence
@@ -58,21 +59,19 @@ if __name__ == "__main__":
 
     while True:  # Continuously loop through asking for a transcription
         try:
-
             transcription = sampleMicrophoneAudio(mic, recognizer, currentLanguage)
-
             # Get transcription and check that it's in the expected format
             if isinstance(transcription, dict) and 'alternative' in transcription.keys():
                 # Print the results (in lieu of actually doing something with the transcription)
                 highestConfidence = (transcription['alternative'])[0]
-                print("{} - (Confidence: {}%)".format(highestConfidence["transcript"], str(highestConfidence["confidence"] * 100)))
+                print("{} - (Confidence: {}%)".format(highestConfidence["transcript"].encode('utf-8'), str(highestConfidence["confidence"] * 100)))
 
                 # Autonomous Controller hooks - allows the system to monitor, analyze, plan, & execute on the system
                 cont.monitor(highestConfidence["confidence"])
                 result = cont.plan(mostRecentAudio)
 
                 if result != "":
-                    currentLanguage = result;
+                    currentLanguage = result
             else:
                 # If we didn't get a valid transcription, send a 0 for the confidence to the controller and reprompt
                 cont.monitor(0.0)

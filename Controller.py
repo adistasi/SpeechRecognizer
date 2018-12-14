@@ -4,8 +4,8 @@ import LanguagePrediction as lp
 
 # Create 'class objects'
 controllerRecognizer = sr.Recognizer()  # Create a special language-agnostic recognizer for the controller (so we don't have to deal with classifying audio)
-lastThreeConfidences = [-1.0, -1.0, -1.0]  # Create an array to monitor the 3 most recent confidences
-MIMIMUM_ACCEPTABLE_CONFIDENCE = .98  # Define a minimum acceptable confidence for the application
+lastTwoConfidences = [-1.0, -1.0]  # Create an array to monitor the 3 most recent confidences
+MIMIMUM_ACCEPTABLE_CONFIDENCE = 1.0  # Define a minimum acceptable confidence for the application
 
 '''
 Function to monitor the results of the system and update our average confidence every time we get a new recording
@@ -14,8 +14,8 @@ Function to monitor the results of the system and update our average confidence 
 def monitor(newConfidence):
     print("=====MONITOR=====")
     # Add newest confidence to the beginning of the array and remove the oldest confidence
-    lastThreeConfidences.insert(0, newConfidence)
-    lastThreeConfidences.pop()
+    lastTwoConfidences.insert(0, newConfidence)
+    lastTwoConfidences.pop()
 
 '''
 Function to analyze our system properties to ensure we're meeting an acceptable minimum confidence
@@ -25,21 +25,24 @@ Function to analyze our system properties to ensure we're meeting an acceptable 
 def analyze():
     print "=====ANALYZE====="
     # Calculate the average confidence & alert the system if it's below our acceptable minimum (and no -1's in array to indicate we're past initial condition)
-    averageConfidence = sum(lastThreeConfidences)/float(len(lastThreeConfidences))
-    return (averageConfidence < MIMIMUM_ACCEPTABLE_CONFIDENCE and -1 not in lastThreeConfidences)
+    averageConfidence = sum(lastTwoConfidences)/float(len(lastTwoConfidences))
+    return (averageConfidence < MIMIMUM_ACCEPTABLE_CONFIDENCE and -1 not in lastTwoConfidences)
 
 '''
 Function to take in an audio transcription and identify its most likely language (so we can switch the system to that language)
     @param mostRecentAudio The most recent audio transcription
 '''
 def plan(mostRecentAudio):
+    global lastTwoConfidences #Allows us to update global reference
+
     print "=====PLAN====="
     if analyze():  # If our analyze function indicates that we're below average confidence, we identify our new language
         print "Recent Average Confidence too low - identifying new suggested language"
         try:
+            lastTwoConfidences = [-1.0, -1.0] #reset last two condfidences when we switch to a new language
+
             #  Using a language-agnostic recognizer, get the transcription so we can feed it into our ML Algorithm
             transcribedText = controllerRecognizer.recognize_google(mostRecentAudio)
-            print transcribedText
             newLanguage = lp.predictLanguage(transcribedText)
 
             # Call our execute function to enact changes on the system

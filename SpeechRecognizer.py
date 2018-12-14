@@ -18,9 +18,10 @@ def validateRecognizerAndMicrophone(recognizerObject, micObject):
 
 def sampleMicrophoneAudio(mic, recognizer, lang):
     global mostRecentAudio
+    print lang
+    print "Please speak into the microphone for a text transcription:\n"
 
     try:
-        print "Please speak into the microphone for a text transcription:\n"
         with mic as source:
             recognizer.adjust_for_ambient_noise(source, duration=0.5)
             audio = recognizer.listen(source)
@@ -41,26 +42,28 @@ def predictLanguage(transcription):
     return 'fr-FR'
 
 if __name__ == "__main__":
+    global currentLanguage
+
+    count = 0
     recognizer = sr.Recognizer()
     mic = sr.Microphone()
 
     validateRecognizerAndMicrophone(recognizer, mic)
 
     while True:
+        count = count + 1
         transcription = sampleMicrophoneAudio(mic, recognizer, currentLanguage)
+        print transcription
 
         if isinstance(transcription, dict) and 'alternative' in transcription.keys():
             highestConfidence = (transcription['alternative'])[0]
             updateConfidences(highestConfidence["confidence"])
-            print("{} - (Confidence: {}%)".format(highestConfidence["transcript"], str(highestConfidence["confidence"] * 100)))
+            print("{} - (Confidence: {}%)".format(highestConfidence["transcript"].encode('utf-8'), str(highestConfidence["confidence"] * 100)))
+            print count
 
-            if calculateRecentConfidence() < MIMIMUM_ACCEPTABLE_CONFIDENCE and -1 not in lastThreeConfidences:
-                print "Recent Average Confidence too low - switching languages"
-                try:
-                    transcribedText = recognizer.recognize_google(mostRecentAudio)
-                    # currentLanguage = predictLanguage(transcribedText)
-                except:
-                    print "An error occured switching languages"
+            if count >= 1:
+                print "Switching"
+                currentLanguage = "es-DO"
         else:
             updateConfidences(0.0)
             print transcription
