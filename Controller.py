@@ -5,7 +5,7 @@ import LanguagePrediction as lp
 # Create 'class objects'
 controllerRecognizer = sr.Recognizer()  # Create a special language-agnostic recognizer for the controller (so we don't have to deal with classifying audio)
 lastTwoConfidences = [-1.0, -1.0]  # Create an array to monitor the 3 most recent confidences
-MIMIMUM_ACCEPTABLE_CONFIDENCE = 1.0  # Define a minimum acceptable confidence for the application
+MIMIMUM_ACCEPTABLE_CONFIDENCE = 0.7  # Define a minimum acceptable confidence for the application
 
 '''
 Function to monitor the results of the system and update our average confidence every time we get a new recording

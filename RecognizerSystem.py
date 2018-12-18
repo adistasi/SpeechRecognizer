@@ -3,8 +3,8 @@ import speech_recognition as sr
 import Controller as cont
 
 # Define 'class' variables to save current language and the most recent audio input
-currentLanguage = 'fr-FR'  # British English (American English apparently accepts Spanish as input)
-candidateLanguages = ['de-DE', 'es-DO', 'en-GB', 'it-IT']  # German, Spanish (Dominican Republic), French, Italian
+currentLanguage = 'en-GB'  # British English (American English apparently accepts Spanish as input)
+candidateLanguages = ['de-DE', 'es-DO', 'fr-FR', 'it-IT']  # German, Spanish (Dominican Republic), French, Italian
 mostRecentAudio = None
 
 '''
